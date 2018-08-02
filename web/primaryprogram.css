@@ -1,0 +1,51 @@
+body {
+	overflow: auto;
+	background: rgb(220,220,255)
+}
+
+.songboxes {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	flex-direction: row;
+	max-height: 100vh;
+}
+div.songbox {
+	display:flex;
+	flex-direction: column;
+	margin: 10px;
+	border: 3px solid #000;
+	box-shadow: 3px 3px 8px 0px rgba(0,0,0,0.3); 
+	width: 300px;
+	height:500px;
+	background: lightblue;
+	border-radius: 10px;
+}
+
+div.songbox img {
+	display:block;
+	margin:auto;
+	height:250px;
+	padding:10px;
+}
+
+div.songbox div.controls {
+	bottom:0px;
+	width:100%;
+}
+
+div.songbox h3 {
+	text-align: center;
+}
+
+div.songbox p {
+	text-align: center;
+}
+
+div.songbox input.counter {
+	width:50px;
+}
+
+audio {
+	width:100%;
+}
