@@ -24,7 +24,7 @@ MongoClient.connect(mongodb_uri, {
     return;
   }
 
-  let db=client.db('primaryprogram');
+  let db=client.db(process.env.DATABASE_NAME||'primaryprogram');
 
   let app = express();
   app.set('json spaces', 4); // when we respond with json, this is how it will be formatted
