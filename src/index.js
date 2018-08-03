@@ -64,7 +64,40 @@ $(document).ready(function() {
   if (!localStorage.browser_id) {
   	localStorage.browser_id=make_random_id(10);
   }
-  console.log('Browser id: '+localStorage.browser_id);
+
+  $('#report_back').click(on_report_back);
+
+  function on_report_back() {
+    let obj={
+      browser_id:localStorage.browser_id,
+      record:get_record()
+    };
+    $.ajax({
+      type: "POST",
+      url: "/set/record",
+      data: JSON.stringify(obj),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(resp) {
+        if (!resp.success) {
+          show_status('warning','Error reporting data: '+resp.error);
+          return;
+        }
+        show_status('success','Thank you for reporting your counts.');
+      },
+      error: function(jqXHR, textStatus, err) {
+        show_status('warning','Error posting data: '+err);
+      }
+    });
+  }
+
+  function show_status(status_type,message) {
+    $('#status').html(`
+      <div class="alert alert-${status_type}">
+        ${message}
+      </div>
+      `);
+  }
 
 	function setup_box(box,div) {
 		update_count(box.id);
@@ -94,21 +127,37 @@ $(document).ready(function() {
 	function update_count(id) {
 		$(`#${id} .count`).html(get_count(id));
 	}
+  function get_record() {
+    try {
+      let rec=JSON.parse(localStorage['primaryprogram_record'])||{};
+      if (typeof(rec)!='object')
+        rec={};
+      return rec;
+    }
+    catch(err) {
+      return {};
+    }
+  }
+  function set_record(rec) {
+    try {
+      localStorage['primaryprogram_record']=JSON.stringify(rec);
+    }
+    catch(err) {
+
+    }
+  }
 	function get_count(id) {
-		try {
-			return Number(localStorage['count--'+id]||0);
-		}
-		catch(err) {
-			return 0;
-		}
+    let rec=get_record();
+    let counts=rec.counts||{};
+    return Number(counts[id]||0);
 	}
 	function set_count(id,num) {
-		if (num<0) num=0;
-		try {
-			localStorage['count--'+id]=Number(num);
-		}
-		catch(err) {
-		}
+    if (num<0) num=0;
+		let rec=get_record();
+    if (!rec.counts) rec.counts={};
+    let counts=rec.counts;
+    counts[id]=num;
+    set_record(rec);
 	}
 
 });
