@@ -4,10 +4,10 @@ $(document).ready(function() {
 
   let boxes = [];
   boxes.push({
-  	id: 'i-am-a-child-of-god',
-  	image_url:'https://www.lds.org/bc/content/shared/content/images/gospel-library/magazine/fr09jan41_color.jpg',
-  	song_title: 'I am a child of God',
-  	music_url: 'http://broadcast.lds.org/churchmusic/MP3/1/2/words/2.mp3?download=true'
+    id: 'i-am-a-child-of-god',
+    image_url: 'https://www.lds.org/bc/content/shared/content/images/gospel-library/magazine/fr09jan41_color.jpg',
+    song_title: 'I am a child of God',
+    music_url: 'http://broadcast.lds.org/churchmusic/MP3/1/2/words/2.mp3?download=true'
   });
   boxes.push({
     id: 'my-heavenly-father-loves-me',
@@ -46,13 +46,13 @@ $(document).ready(function() {
     let img = $(`<img src="${box.image_url}"></img>`);
     div.append(img);
     div.append(`<h3 style="flex-grow:1">${box.song_title}</h3>`);
-    let controls=$('<div class=controls />');
+    let controls = $('<div class=controls />');
     div.append(controls);
-    
-    controls.append('<p>I listened to this song <span class=count>[0]</span> times.<br><a id=add href="#">add</a> / <a id=subtract href="#">subtract</a> / <a id=reset href="#">reset</a></p>');
+
+    controls.append('<p>I listened to this song <span class=count>[0]</span> times.<br><!--- <a id=add href="#">add</a> / <a id=subtract href="#">subtract</a> / <a id=reset href="#">reset</a> ---></p>');
     controls.append(`<audio controls><source src="${box.music_url}" /></audio>`);
     $('.songboxes').append(div);
-    setup_box(box,div);
+    setup_box(box, div);
   }
 
   $("audio").on("play", function() {
@@ -62,15 +62,15 @@ $(document).ready(function() {
   });
 
   if (!localStorage.browser_id) {
-  	localStorage.browser_id=make_random_id(10);
+    localStorage.browser_id = make_random_id(10);
   }
 
   $('#report_back').click(on_report_back);
 
   function on_report_back() {
-    let obj={
-      browser_id:localStorage.browser_id,
-      record:get_record()
+    let obj = {
+      browser_id: localStorage.browser_id,
+      record: get_record()
     };
     $.ajax({
       type: "POST",
@@ -80,85 +80,138 @@ $(document).ready(function() {
       dataType: "json",
       success: function(resp) {
         if (!resp.success) {
-          show_status('warning','Error reporting data: '+resp.error);
+          show_status('warning', 'Error reporting data: ' + resp.error);
           return;
         }
-        show_status('success','Thank you for reporting your counts.');
+        show_status('success', 'Nice job! Keep listening.');
       },
       error: function(jqXHR, textStatus, err) {
-        show_status('warning','Error posting data: '+err);
+        show_status('warning', 'Error posting data: ' + err);
       }
     });
   }
 
-  function show_status(status_type,message) {
+  let last_status=new Date();
+  function show_status(status_type, message) {
+    last_status=new Date();
     $('#status').html(`
       <div class="alert alert-${status_type}">
         ${message}
       </div>
       `);
+    if (!message) {
+      $('#status').html(`
+        <div class="alert alert-primary">
+        See how many times you can listen to these songs!
+        </div>
+      `);
+    }
+    if (message) {
+      setTimeout(check_clear_status,5000);
+    }
+  }
+  show_status('','');
+  function check_clear_status() {
+    let elapsed=(new Date())-last_status;
+    if (elapsed>3000) {
+      show_status('','');
+    }
   }
 
-	function setup_box(box,div) {
-		update_count(box.id);
-		div.find('#add').click(on_add);
-		div.find('#subtract').click(on_subtract);
-		div.find('#reset').click(on_reset);
+  function setup_box(box, div) {
+    update_count(box.id);
+    div.find('#add').click(on_add);
+    div.find('#subtract').click(on_subtract);
+    div.find('#reset').click(on_reset);
 
-		function on_add() {
-			increment_count(box.id,1);
-			return false;
-		}
-		function on_subtract() {
-			increment_count(box.id,-1);
-			return false;
-		}
-		function on_reset() {
-			set_count(box.id,0);
-			update_count(box.id);
-			return false;
-		}
-	}
+    disable_seeking_forward(div.find('audio'));
+    div.find('audio')[0].addEventListener('ended', function() {
+      div.find('audio')[0].currentTime=0;
+      increment_count(box.id, 1);
+      setTimeout(function() {
+        on_report_back();
+      },1000);
+    });
 
-	function increment_count(id,num) {
-		set_count(id,get_count(id)+num);
-		update_count(id);
-	}
-	function update_count(id) {
-		$(`#${id} .count`).html(get_count(id));
-	}
+    function on_add() {
+      increment_count(box.id, 1);
+      return false;
+    }
+
+    function on_subtract() {
+      increment_count(box.id, -1);
+      return false;
+    }
+
+    function on_reset() {
+      set_count(box.id, 0);
+      update_count(box.id);
+      return false;
+    }
+  }
+
+  function disable_seeking_forward(audio_elmt) {
+    let audio = audio_elmt[0];
+    let supposedCurrentTime = 0;
+    audio.addEventListener('timeupdate', function() {
+      if (!audio.seeking) {
+        supposedCurrentTime = audio.currentTime;
+      }
+    });
+    // prevent user from seeking
+    audio.addEventListener('seeking', function() {
+      // guard agains infinite recursion:
+      // user seeks, seeking is fired, currentTime is modified, seeking is fired, current time is modified, ....
+      var delta = audio.currentTime - supposedCurrentTime;
+      if (delta > 0.01) {
+        console.log("Seeking is disabled");
+        audio.currentTime = supposedCurrentTime;
+      }
+    });
+  }
+
+  function increment_count(id, num) {
+    set_count(id, get_count(id) + num);
+    update_count(id);
+  }
+
+  function update_count(id) {
+    $(`#${id} .count`).html(get_count(id));
+  }
+
   function get_record() {
     try {
-      let rec=JSON.parse(localStorage['primaryprogram_record'])||{};
-      if (typeof(rec)!='object')
-        rec={};
+      let rec = JSON.parse(localStorage['primaryprogram_record']) || {};
+      if (typeof(rec) != 'object')
+        rec = {};
       return rec;
-    }
-    catch(err) {
+    } catch (err) {
       return {};
     }
   }
+
   function set_record(rec) {
     try {
-      localStorage['primaryprogram_record']=JSON.stringify(rec);
-    }
-    catch(err) {
+      localStorage['primaryprogram_record'] = JSON.stringify(rec);
+    } catch (err) {
 
     }
   }
-	function get_count(id) {
-    let rec=get_record();
-    let counts=rec.counts||{};
-    return Number(counts[id]||0);
-	}
-	function set_count(id,num) {
-    if (num<0) num=0;
-		let rec=get_record();
-    if (!rec.counts) rec.counts={};
-    let counts=rec.counts;
-    counts[id]=num;
+
+  function get_count(id) {
+    let rec = get_record();
+    let counts = rec.counts || {};
+    return Number(counts[id] || 0);
+  }
+
+  function set_count(id, num) {
+    if (num < 0) num = 0;
+    let rec = get_record();
+    if (!rec.counts) rec.counts = {};
+    let counts = rec.counts;
+    counts[id] = num;
     set_record(rec);
-	}
+  }
 
 });
 
