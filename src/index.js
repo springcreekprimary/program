@@ -49,7 +49,7 @@ $(document).ready(function() {
     let controls = $('<div class=controls />');
     div.append(controls);
 
-    controls.append('<p>I listened to this song <span class=count>[0]</span> times.<br><!--- <a id=add href="#">add</a> / <a id=subtract href="#">subtract</a> / <a id=reset href="#">reset</a> ---></p>');
+    controls.append('<p>You listened to this song <span class=count>[0]</span> times.<br><!--- <a id=add href="#">add</a> / <a id=subtract href="#">subtract</a> / <a id=reset href="#">reset</a> ---></p>');
     controls.append(`<audio controls><source src="${box.music_url}" /></audio>`);
     $('.songboxes').append(div);
     setup_box(box, div);
