@@ -102,7 +102,7 @@ $(document).ready(function() {
     if (!message) {
       $('#status').html(`
         <div class="alert alert-primary">
-        See how many times you can listen to these songs!
+        Primary program songs 2018
         </div>
       `);
     }
