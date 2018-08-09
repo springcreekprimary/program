@@ -49,3 +49,7 @@ div.songbox input.counter {
 audio {
 	width:100%;
 }
+
+.scripture {
+	 font-style: italic;
+}

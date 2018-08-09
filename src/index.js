@@ -55,6 +55,40 @@ $(document).ready(function() {
     setup_box(box, div);
   }
 
+
+  {
+    let div=$(`<div class=songbox />`);
+    div.append(`<h3>Unlocked scriptures</h3>`);
+    let ul=$('<ul />');
+    ul.append('<li>1. <span class=scripture id=scripture1></span></li>');
+    ul.append('<li>2. <span class=scripture id=scripture2></span></li>');
+    ul.append('<li>3. <span class=scripture id=scripture3></span></li>');
+    div.append(ul);
+    $('.songboxes').append(div);
+  }
+
+  function update_unlocked_scriptures() {
+    let min_count=99999;
+    for (let i in boxes) {
+      let box=boxes[i];
+      let count=get_count(box.id)||0;
+      if (count<min_count)
+        min_count=count;
+    }
+    console.info('min_count: '+min_count);
+    if (min_count>=1) {
+      $('#scripture1').html('... the song of the righteous is a prayer unto me... D&C 25:12');
+    }
+    if (min_count>=2) {
+      $('#scripture2').html('... little children are alive in Christ, even from the foundation of the world... Moroni 8:12');
+    }
+    if (min_count>=3) {
+      $('#scripture3').html('... But Jesus said, Suffer little children, and forbid them not, to come unto me: for of such is the kingdom of heaven.... Matthew 19:14');
+    }
+  }
+  update_unlocked_scriptures();
+
+
   $("audio").on("play", function() {
     $("audio").not(this).each(function(index, audio) {
       audio.pause();
@@ -84,11 +118,13 @@ $(document).ready(function() {
           return;
         }
         show_status('success', 'Nice job! Keep listening.');
+        update_unlocked_scriptures();
       },
       error: function(jqXHR, textStatus, err) {
         show_status('warning', 'Error posting data: ' + err);
       }
     });
+    update_unlocked_scriptures();
   }
 
   let last_status=new Date();
