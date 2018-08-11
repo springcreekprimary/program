@@ -37,7 +37,7 @@ $(document).ready(function() {
     id: 'if-the-savior-stood-beside-me',
     image_url: 'https://media.ldscdn.org/images/media-library/gospel-art/gospel-in-action/jesus-children-37775-gallery.jpg',
     song_title: "If the Savior stood beside me",
-    music_url: 'http://broadcast.lds.org/churchmusic/MP3/1/2/words/12.mp3?download=true'
+    music_url: 'http://broadcast.lds.org/churchmusic/Primary/PR_IfTheSavior_eng.mp3?download=true'
   });
 
   for (let i in boxes) {
