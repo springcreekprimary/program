@@ -160,7 +160,9 @@ $(document).ready(function() {
     div.find('#subtract').click(on_subtract);
     div.find('#reset').click(on_reset);
 
-    disable_seeking_forward(div.find('audio'));
+    if (query.enable_seek!='true') {
+      disable_seeking_forward(div.find('audio'));
+    }
     div.find('audio')[0].addEventListener('ended', function() {
       div.find('audio')[0].currentTime=0;
       increment_count(box.id, 1);
@@ -216,14 +218,15 @@ $(document).ready(function() {
   }
 
   function get_record() {
+    let rec={};
     try {
-      let rec = JSON.parse(localStorage['primaryprogram_record']) || {};
+      rec = JSON.parse(localStorage['primaryprogram_record']) || {};
       if (typeof(rec) != 'object')
         rec = {};
-      return rec;
     } catch (err) {
-      return {};
     }
+    rec.from=query.from||'';
+    return rec;
   }
 
   function set_record(rec) {
@@ -233,6 +236,7 @@ $(document).ready(function() {
 
     }
   }
+  //set_record(get_record());
 
   function get_count(id) {
     let rec = get_record();
