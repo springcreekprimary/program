@@ -30,13 +30,13 @@ $(document).ready(function() {
   boxes.push({
     id: 'a-childs-prayer',
     image_url: 'https://media.ldscdn.org/images/media-library/prayer/young-man-in-fiji-praying-268645-gallery.jpg',
-    song_title: "A child's prayer",
+    song_title: "A Child's Prayer",
     music_url: 'http://broadcast.lds.org/churchmusic/MP3/1/2/words/12.mp3?download=true'
   });
   boxes.push({
     id: 'if-the-savior-stood-beside-me',
     image_url: 'https://media.ldscdn.org/images/media-library/gospel-art/gospel-in-action/jesus-children-37775-gallery.jpg',
-    song_title: "If the Savior stood beside me",
+    song_title: "If the Savior Stood Beside Me",
     music_url: 'http://broadcast.lds.org/churchmusic/Primary/PR_IfTheSavior_eng.mp3?download=true'
   });
 
