@@ -1,4 +1,4 @@
-# primaryprogram
+# PrimaryProgram
 
 Children can listen to music for the primary program and report back to the music leader.
 
