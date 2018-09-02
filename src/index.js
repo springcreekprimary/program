@@ -19,7 +19,7 @@ $(document).ready(function() {
     id: 'when-i-am-baptized',
     image_url: 'https://media.ldscdn.org/images/media-library/gospel-art/gospel-in-action/baptism-lds-593669-gallery.jpg',
     song_title: 'Baptism',
-    music_url: 'https://www.lds.org/music/library/childrens-songbook/baptism?lang=eng#=true'
+    music_url: 'http://broadcast.lds.org/churchmusic/MP3/1/2/words/100.mp3?=true'
   });
   boxes.push({
     id: 'families-can-be-together-forever',
